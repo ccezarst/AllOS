@@ -35,7 +35,9 @@ extern "C" void main(){
 	timer_install();
 	kb_install();
     initializeMem();
-    
+
+	
+
     load_shell();
     //kprint(strDecapitate("print pal", strLen("print ")));
     //kprint("one\ntwo two \nthree three three \nfour four four four");

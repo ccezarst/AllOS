@@ -359,3 +359,14 @@ void deleteChar(){
 
 
 
+//Writing pixels to screen
+
+
+void putpixel(int pos_x, int pos_y, uint8_t VGA_COLOR)
+{
+	uint8_t* a = (0xA0000 + ((320 * pos_y) + pos_x));
+	*a = VGA_COLOR;
+}
+
+
+

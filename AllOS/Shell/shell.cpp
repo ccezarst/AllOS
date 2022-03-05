@@ -76,6 +76,16 @@ void load_shell(){
     // kprintCol(toString(CommandCursor, 10), defCol, false);
     // kprintChar('\n', false);
     // SetCursorPosRaw(CommandCursor);
+    int a = 0;
+    for(int i = 0; i <= 200; i++){
+        for(int d = 0; d <= 320; d++){
+            if(a > 255){
+                a = 0;
+            }
+            putpixel(d, i, a);
+            a++;
+        }
+    }   
 	return;
     
 }
@@ -124,7 +134,7 @@ void findCommand(int t_CursorPos){
 //     return res;
 // }
 
-char cmds[256][256] = {
+char cmds[256][128] = {
     "clear",
     "echo",
     "floppy",
@@ -134,21 +144,13 @@ char cmds[256][256] = {
 
 
 
-int CheckCMD(){
-    int rest = 0;
-    int rests[128];
-    
-    for(int i = 0; i < 128; i++){  
-        for(int a; a < 256; a++){
-            rests[i] = CommandBuffer[a] - cmds[i][a];
-            kprintChar('\n', false);
-            kprintCharCol(toString(rests[i], 10), 0xF, false);
-        }
+
+
+uint16_t CheckCMD(){
+    uint8_t cmds[256];
+    for(int i = 0; i < 256; i++){
+
     }
-    for(int i = 0; i < 128; i++){
-        rest += rests[i];
-    }
-    return rest;
 }
 
 void parseCommand(){
@@ -162,7 +164,12 @@ void parseCommand(){
     // else if (CheckCMD(clearCMD, "clear")){;}
     // else {kprintChar('\n', false); printError(CommandBuffer); printError(" is not a command");}
     kprintChar('\n', false);
-    printError(toString(CheckCMD(), 10));
+    uint16_t* adbd = CheckCMD();
+    for(int c = 0; c < 255; c++){
+        int temp = (int)*(adbd + c);
+        kprintCharCol(toString(temp, 10), 0xF, false);
+        kprintCharCol('|', 0xF, false);
+    }
     kprint("\n");
     CommandCursor = CursorPos;
     // SetCursorPosRaw(1920);
