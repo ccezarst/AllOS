@@ -41,7 +41,7 @@ cat "WeeBins/short.bin" "WeeBins/empty_end.bin" > os_image.bin
 
 
 
-#qemu-system-x86_64 -s -S -drive format=raw,file=os_image.bin,index=0,if=floppy		# GDB
+# qemu-system-x86_64 -s -S -drive format=raw,file=os_image.bin,index=0,if=floppy		# GDB
 
 
 

@@ -76,16 +76,6 @@ void load_shell(){
     // kprintCol(toString(CommandCursor, 10), defCol, false);
     // kprintChar('\n', false);
     // SetCursorPosRaw(CommandCursor);
-    int a = 0;
-    for(int i = 0; i <= 200; i++){
-        for(int d = 0; d <= 320; d++){
-            if(a > 255){
-                a = 0;
-            }
-            putpixel(d, i, a);
-            a++;
-        }
-    }   
 	return;
     
 }
@@ -96,13 +86,13 @@ void refreshShell(){
     ClrLine(0);
     ClrLine(1);
 	SetCursorPos(0,0);
-	kprintCol("AllOS shell - ", defCol, false);
+    kprintCol("AllOS shell - ", defCol, false);
     kprintCol("[", 0x5, false);
     kprintCol("task: ", defCol, false);
     kprintCol(currentTask, 0xA, false);
     kprintCol("]\n", 0x5, false);
-    SetCursorPos(0, 1);
     kprintCol(">", defCol, false); 
+    CommandCursor = CursorPos; 
 	return;
 }
 
@@ -135,22 +125,47 @@ void findCommand(int t_CursorPos){
 // }
 
 char cmds[256][128] = {
-    "clear",
-    "echo",
-    "floppy",
-    "usedmem",
-    "help"
+    "help\0",
+    "clear\0",
+    "echo\0",
+    "floppy\0",
+    "usedmem\0"
+};
+
+typedef void(*cmdsFuncPoint)(const char*);
+cmdsFuncPoint cmdsFunc[256] = {
+    helpCMD
 };
 
 
 
 
-
-uint16_t CheckCMD(){
-    uint8_t cmds[256];
-    for(int i = 0; i < 256; i++){
-
+void CheckCMD(){
+    int commandLength = 1;
+    int possibleCmd_nr = 0;
+    int a = 0;
+    while(bool keeprunning = true){
+        if(CommandBuffer[a] != ' '){
+            keeprunning = false;
+        }else{
+            commandLength++;
+        }
+        a++;
     }
+    char command[commandLength];
+    for(int i = 0; i < commandLength; i++){
+        command[i] = CommandBuffer[i];
+    }
+    for(int i = 0; i < 256; i++){
+        if(StringsEqu(&command[0], &cmds[i][0])){
+            possibleCmd_nr = i;
+        }
+    }
+    // typedef void myFunc = ((void (*)(const char*))cmdsFunc[possibleCmd_nr]);
+    // (cmdsFunc[possibleCmd_nr])((const char*)&CommandBuffer[commandLength]);
+    kprintCharCol(toString(possibleCmd_nr, 10), 0xF, false);
+    (*cmdsFunc[possibleCmd_nr])(&CommandBuffer[commandLength]);
+
 }
 
 void parseCommand(){
@@ -164,13 +179,8 @@ void parseCommand(){
     // else if (CheckCMD(clearCMD, "clear")){;}
     // else {kprintChar('\n', false); printError(CommandBuffer); printError(" is not a command");}
     kprintChar('\n', false);
-    uint16_t* adbd = CheckCMD();
-    for(int c = 0; c < 255; c++){
-        int temp = (int)*(adbd + c);
-        kprintCharCol(toString(temp, 10), 0xF, false);
-        kprintCharCol('|', 0xF, false);
-    }
-    kprint("\n");
+    CheckCMD();
+    kprint("its about uwu");
     CommandCursor = CursorPos;
     // SetCursorPosRaw(1920);
     refreshShell();
